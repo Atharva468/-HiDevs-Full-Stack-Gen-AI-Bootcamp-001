@@ -1,0 +1,46 @@
+import pickle
+
+class PersonalInformationManager:
+    def __init__(self):
+        self.data = {}
+        self.secret_names = {}
+        self.load_data()
+
+    def load_data(self):
+        try:
+            with open('problem1_data_file.pickle', 'rb') as f:
+                self.data, self.secret_names = pickle.load(f)
+        except FileNotFoundError:
+            pass
+
+    def save_data(self):
+        with open('problem1_data_file.pickle', 'wb') as f:
+            pickle.dump((self.data, self.secret_names), f)
+
+    def add_person(self, name, dob, secret=False):
+        if secret:
+            self.secret_names[name] = True
+        else:
+            self.data[name] = dob
+        self.save_data()
+
+    def display_dob(self, name):
+        if name in self.secret_names:
+            print("Secret")
+        elif name in self.data:
+            print(self.data[name])
+        else:
+            print("Name not found")
+
+if __name__ == "__main__":
+    manager = PersonalInformationManager()
+    while True:
+        name = input("Enter name (type 'exit' to quit): ")
+        if name == 'exit':
+            break
+        dob = input("Enter date of birth (YYYY-MM-DD): ")
+        secret = input("Is this person's date of birth secret? (yes/no): ").lower() == 'yes'
+        manager.add_person(name, dob, secret)
+
+    name_to_display = input("Enter name to display date of birth: ")
+    manager.display_dob(name_to_display)
